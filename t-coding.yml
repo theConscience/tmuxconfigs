@@ -59,4 +59,4 @@ windows:
         - git2:
           - cd ../
           - clear
-          - git st
+          - git status

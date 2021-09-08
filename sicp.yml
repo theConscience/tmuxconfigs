@@ -54,4 +54,4 @@ windows:
       panes:
         - vim .
         - racket -i -p neil/sicp -l xrepl
-        - git st
+        - git status

@@ -55,7 +55,7 @@ windows:
       panes:
         - vim ~/.vimrc
         - git diff --staged
-        - git st
+        - git status
         # - guard
   # - server: bundle exec rails s
   # - logs: tail -f log/development.log
