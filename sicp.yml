@@ -1,7 +1,7 @@
 # /Users/ws/.config/tmuxinator/sicp.yml
 
 name: sicp
-root: ~/web_dev/repos/learn/sicp/sicp-racket
+root: ~/web_dev/repos/learn/sicp
 
 # Optional tmux socket
 # socket_name: foo
