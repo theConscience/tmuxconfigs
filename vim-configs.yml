@@ -1,7 +1,7 @@
-# /Users/ws/.config/tmuxinator/vim-configs.yml
+# /Users/rukapv00/.config/tmuxinator/vim-configs.yml
 
 name: vim-configs
-root: ~/web_dev/repos/vimconfigs
+root: ~/Documents/web_dev/repos/vimconfigs
 
 
 # Optional tmux socket

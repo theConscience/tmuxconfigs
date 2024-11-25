@@ -1,7 +1,7 @@
-# /Users/ws/.config/tmuxinator/zsh-configs.yml
+# /Users/rukapv00/.config/tmuxinator/zsh-configs.yml
 
 name: zsh-configs
-root: ~/web_dev/repos/zshconfigs
+root: ~/Documents/web_dev/repos/zshconfigs
 
 # Optional tmux socket
 # socket_name: foo

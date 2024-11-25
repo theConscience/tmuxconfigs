@@ -1,7 +1,7 @@
-# /Users/ws/.config/tmuxinator/tmux-configs.yml
+# /Users/rukapv00/.config/tmuxinator/tmux-configs.yml
 
 name: tmux-configs
-root: ~/web_dev/repos/tmuxconfigs
+root: ~/Documents/web_dev/repos/tmuxconfigs
 
 # Optional tmux socket
 # socket_name: foo
