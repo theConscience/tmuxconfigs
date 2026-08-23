@@ -54,5 +54,5 @@ windows:
       panes:
         - vim .
         - git status
-  - server: cd ~/web_dev/repos/learn/fp/hardcore_fn_programming_drboolean_v1/immutube/ && python -m SimpleHTTPServer
+  - server: python3 -m http.server
   # - logs: tail -f log/development.log
