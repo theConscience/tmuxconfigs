@@ -1,7 +1,7 @@
 # /Users/rukapv00/.config/tmuxinator/cloudblue-spa.yml
 
 name: cloudblue-spa
-root: ~/Documents/web_dev/repos/work/cloudblue/spa/
+root: ~/web_dev/repos/work/cloudblue/spa/
 
 # Optional tmux socket
 # socket_name: foo
