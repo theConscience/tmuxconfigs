@@ -1,5 +1,3 @@
-name: ca
-root: ~/web_dev/repos/projects/channel-admin
 name: corona-travel
 root: <%= @args[0] || "~/web_dev/repos/work/unihotel/corona-travel" %>
 
