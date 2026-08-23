@@ -1,7 +1,5 @@
-# /Users/rukapv00/.config/tmuxinator/react-tutorial.yml
-
 name: react-tutorial
-root: ~/Documents/web_dev/repos/practice/react-tutorial/
+root: ~/web_dev/repos/learn/js/react-tutorial/
 
 # Optional tmux socket
 # socket_name: foo
