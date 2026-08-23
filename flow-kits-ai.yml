@@ -1,0 +1,38 @@
+name: flow-kits-ai
+root: <%= @args[0] || "~/web_dev/repos/projects/ai" %>
+
+windows:
+  - overview:
+      layout: even-horizontal
+      panes:
+        - bash -lc 'cd 1-ai-easy-kit/ai-agent-flow-kit && git status --short --branch; exec $SHELL'
+        - bash -lc 'cd 2-ai-pro-kit && git status --short --branch; exec $SHELL'
+        - bash -lc 'cd 2-ai-pro-kit/ai-agents-flow-pro-kit && git status --short --branch; exec $SHELL'
+
+  - easy-kit:
+      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      panes:
+        - cd 1-ai-easy-kit/ai-agent-flow-kit && nvim .
+        - bash -lc 'cd 1-ai-easy-kit/ai-agent-flow-kit && just --list; exec $SHELL'
+        - bash -lc 'cd 1-ai-easy-kit/ai-agent-flow-kit && git status --short --branch; exec $SHELL'
+
+  - pro-workspace:
+      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      panes:
+        - cd 2-ai-pro-kit && nvim .
+        - bash -lc 'cd 2-ai-pro-kit && just --list; exec $SHELL'
+        - bash -lc 'cd 2-ai-pro-kit && git status --short --branch; exec $SHELL'
+
+  - pro-kit:
+      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      panes:
+        - cd 2-ai-pro-kit/ai-agents-flow-pro-kit && nvim .
+        - bash -lc 'cd 2-ai-pro-kit/ai-agents-flow-pro-kit && just --list; exec $SHELL'
+        - bash -lc 'cd 2-ai-pro-kit/ai-agents-flow-pro-kit && git status --short --branch; exec $SHELL'
+
+  - ai:
+      layout: even-horizontal
+      panes:
+        - bash -lc 'cd 1-ai-easy-kit/ai-agent-flow-kit && codex; exec $SHELL'
+        - bash -lc 'cd 2-ai-pro-kit && codex; exec $SHELL'
+        - bash -lc 'cd 2-ai-pro-kit/ai-agents-flow-pro-kit && codex; exec $SHELL'

@@ -1,0 +1,57 @@
+name: unihotel-ai
+root: <%= @args[0] || "~/web_dev/repos/work/unihotel" %>
+
+# Внешняя папка — не git-репозиторий, а контейнер для двух:
+#   unihotel_org/   Django-монолит, ветка ai/analysis
+#   corona-travel/  markup/reference для новой темы Kirov
+# Поэтому git-панели живут внутри репозиториев, а внешний корень нужен для
+# кросс-репо команд: grep по обоим деревьям, сверка решений и опросника.
+
+windows:
+  - uh:
+      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      panes:
+        - cd unihotel_org && nvim .
+        - cd unihotel_org && bash -lc 'git status; exec $SHELL'
+        - cd unihotel_org && bash -lc 'exec $SHELL'
+
+  - ct:
+      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      panes:
+        - cd corona-travel && nvim .
+        - cd corona-travel && bash -lc 'pnpm markup:serve; exec $SHELL'
+        - cd corona-travel && bash -lc 'git status; exec $SHELL'
+
+  # Четыре панели вместо трёх, поэтому tiled (2x2), а не сохранённый
+  # layout от трёхпанельных окон — он рассчитан ровно на три.
+  - ai:
+      layout: tiled
+      panes:
+        - cd unihotel_org && bash -lc 'claude; exec $SHELL'
+        - cd unihotel_org && bash -lc 'codex; exec $SHELL'
+        - cd corona-travel && bash -lc 'claude; exec $SHELL'
+        - bash -lc 'opencode; exec $SHELL'
+
+  - run:
+      layout: even-horizontal
+      panes:
+        # 127.0.0.1, не 0.0.0.0 — из-за Host/tenant middleware (правило F7).
+        # Партнёр подменяется через ?site_host=kirov.coronatours.ru
+        - cd unihotel_org && bash -lc 'uv run python manage.py runserver 127.0.0.1:8000; exec $SHELL'
+        # Инфра (PostgreSQL/Redis/RabbitMQ/Memcached) — в контейнерах,
+        # приложение через Compose не поднимаем (правило F1).
+        - cd unihotel_org && bash -lc 'exec $SHELL'
+
+  - test:
+      layout: even-horizontal
+      panes:
+        # Команды печатаются, а не запускаются: оба дерева идут долго,
+        # а make test делает uv lock — берём uv sync --frozen (правило F6).
+        - cd unihotel_org && bash -lc 'echo "uv run pytest -m run_before_push_prod --maxfail=1"; echo "uv run pytest -m run_before_push_prod_syn_tree --uh-test-tree --maxfail=1"; echo "uv run pytest tests/partners/test_partners_theming.py -vv"; exec $SHELL'
+        - cd corona-travel && bash -lc 'echo "pnpm qa:markup"; echo "pnpm qa:search"; echo "pnpm screenshots:reference"; exec $SHELL'
+
+  - docs:
+      layout: even-horizontal
+      panes:
+        - bash -lc 'nvim unihotel_org/agents/corona-frontend/v1-questionnaire.md; exec $SHELL'
+        - bash -lc 'exec $SHELL'

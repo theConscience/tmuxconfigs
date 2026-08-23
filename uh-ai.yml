@@ -1,0 +1,25 @@
+name: uh-ai
+root: <%= @args[0] || "~/web_dev/repos/work/unihotel/unihotel_org-ai-task" %>
+
+windows:
+  - editor:
+      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      panes:
+        - nvim .
+        - bash -lc 'pnpm dev; exec $SHELL'
+        - bash -lc 'git status; exec $SHELL'
+
+  - ai:
+      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      panes:
+        - bash -lc 'opencode; exec $SHELL'
+        - bash -lc 'codex; exec $SHELL'
+        - bash -lc 'claude; exec $SHELL'
+
+  # - codex:
+  #     panes:
+  #       - bash -lc 'codex; exec $SHELL'
+
+  - check:
+      panes:
+        - bash -lc 'pnpm typecheck; exec $SHELL'

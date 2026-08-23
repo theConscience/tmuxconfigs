@@ -1,0 +1,69 @@
+name: flow-pro-ai
+root: <%= @args[0] || "~/web_dev/repos/projects/ai/2-ai-pro-kit" %>
+
+# Flow Pro workspace: three independent Git repositories, never submodules.
+#
+#   .                                      workspace orchestration repository
+#   ai-agents-flow-pro-kit/                upstream package repository
+#   adoptions/covenant-fighters-adoption/  downstream package repository
+#
+# Panes that target the adoption tree guard on its presence, because it is
+# ignored by the workspace repository and is not guaranteed to be cloned.
+
+windows:
+  - editor:
+      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      panes:
+        - nvim .
+        - bash -lc 'just --list; exec $SHELL'
+        - bash -lc 'git status --short --branch; exec $SHELL'
+
+  - workflow:
+      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      panes:
+        - bash -lc 'just where; just versions; exec $SHELL'
+        - bash -lc 'just status; exec $SHELL'
+        - bash -lc 'printf "handoff   just handoff <version> [candidate]\nqualify   just upstream-qualify | just adoption-qualify\nsync      ai-agents-flow-pro-kit/docs/UPSTREAM_DOWNSTREAM_SYNC.md\ncommands  ai-agents-flow-pro-kit/docs/CROSS_REPO_COMMAND_MAP.md\n\nArgument conventions differ between the two repositories.\n"; exec $SHELL'
+
+  - upstream:
+      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      panes:
+        - cd ai-agents-flow-pro-kit && nvim .
+        - bash -lc 'cd ai-agents-flow-pro-kit && just --list; exec $SHELL'
+        - bash -lc 'cd ai-agents-flow-pro-kit && git status --short --branch; exec $SHELL'
+
+  - adoptions:
+      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      panes:
+        - bash -lc 'target=adoptions/covenant-fighters-adoption; if [ -d "$target" ]; then cd "$target"; exec nvim .; else echo "ADOPTION DOWNSTREAM NOT CLONED -> $target"; exec $SHELL; fi'
+        - bash -lc 'target=adoptions/covenant-fighters-adoption; if [ -d "$target" ]; then cd "$target"; just --list; else echo "ADOPTION DOWNSTREAM NOT CLONED -> $target"; fi; exec $SHELL'
+        - bash -lc 'target=adoptions/covenant-fighters-adoption; if [ -d "$target" ]; then cd "$target"; git status --short --branch; else echo "git@github.com:theConscience/ai-flow-pro-adoption-covenant-fighters.git"; fi; exec $SHELL'
+
+  - agents:
+      layout: tiled
+      panes:
+        - bash -lc 'opencode; exec $SHELL'
+        - bash -lc 'codex; exec $SHELL'
+        - bash -lc 'claude; exec $SHELL'
+        - bash -lc 'agy; exec $SHELL'
+
+  - gates:
+      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      panes:
+        - bash -lc 'just docs-check; exec $SHELL'
+        - bash -lc 'just smoke; exec $SHELL'
+        - bash -lc 'just env; exec $SHELL'
+
+  - packages:
+      layout: even-horizontal
+      panes:
+        - bash -lc 'cd ai-agents-flow-pro-kit && printf "[upstream]\n"; ls -d baselines/*/ work/*/ dist/*/ 2>/dev/null; exec $SHELL'
+        - bash -lc 'target=adoptions/covenant-fighters-adoption; if [ -d "$target" ]; then cd "$target"; printf "[adoption]\n"; ls -d baselines/*/ work/*/ dist/*/ 2>/dev/null; else echo "ADOPTION DOWNSTREAM NOT CLONED"; fi; exec $SHELL'
+        - bash -lc 'cd ai-agents-flow-pro-kit && printf "[evidence/reviews]\n"; ls evidence/reviews 2>/dev/null; exec $SHELL'
+
+  - git:
+      layout: even-horizontal
+      panes:
+        - bash -lc 'printf "[workspace] git@github.com:theConscience/ai-flow-pro-workspace.git\n"; git status --short --branch; exec $SHELL'
+        - bash -lc 'printf "[upstream] git@github.com:theConscience/ai-flow-pro-kit.git\n"; git -C ai-agents-flow-pro-kit status --short --branch; exec $SHELL'
+        - bash -lc 'target=adoptions/covenant-fighters-adoption; printf "[adoption] git@github.com:theConscience/ai-flow-pro-adoption-covenant-fighters.git\n"; if [ -d "$target" ]; then git -C "$target" status --short --branch; else echo "NOT CLONED -> $target"; fi; exec $SHELL'

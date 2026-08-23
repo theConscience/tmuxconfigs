@@ -1,0 +1,20 @@
+name: ca
+root: ~/web_dev/repos/projects/channel-admin
+name: corona-travel
+root: <%= @args[0] || "~/web_dev/repos/work/unihotel/corona-travel" %>
+
+windows:
+  - editor:
+      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      panes:
+        - nvim .
+        - bash -lc 'pnpm dev; exec $SHELL'
+        - bash -lc 'git status; exec $SHELL'
+
+  - ai:
+      panes:
+        - bash -lc 'opencode; exec $SHELL'
+
+  - check:
+      panes:
+        - bash -lc 'pnpm typecheck; exec $SHELL'

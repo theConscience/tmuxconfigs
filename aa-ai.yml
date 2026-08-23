@@ -1,0 +1,32 @@
+name: aa-ai
+root: <%= @args[0] || "~/web_dev/repos/projects/ai/3-ai-super-kit" %>
+
+windows:
+  - editor:
+      layout: main-vertical
+      panes:
+        - nvim .
+        - bash -lc 'cd ai-architect-flow && git status; exec $SHELL'
+        - bash -lc 'cd ai-architect-v6-15-1-smoke-diversity-hotfix-package && git status; exec $SHELL'
+        - bash -lc 'cd ai-architect-v6-15-ab-measurement-policy-package && printf "A/B package (snapshot; no .git)\n"; exec $SHELL'
+
+  - ai:
+      layout: even-horizontal
+      panes:
+        - bash -lc 'opencode; exec $SHELL'
+        - bash -lc 'codex; exec $SHELL'
+        - bash -lc 'claude; exec $SHELL'
+
+  - repos:
+      layout: even-horizontal
+      panes:
+        - bash -lc 'cd ai-architect-flow && git status; exec $SHELL'
+        - bash -lc 'cd ai-architect-v6-15-1-smoke-diversity-hotfix-package && git status; exec $SHELL'
+        - bash -lc 'cd ai-architect-v6-15-ab-measurement-policy-package && exec $SHELL'
+
+  - check:
+      layout: even-horizontal
+      panes:
+        - bash -lc 'cd ai-architect-flow && just --list; exec $SHELL'
+        - bash -lc 'cd ai-architect-flow && printf "Commands — just verify | just qualify\n"; exec $SHELL'
+        - bash -lc 'cd ai-architect-v6-15-1-smoke-diversity-hotfix-package && printf "Command — bash tests/smoke-ai-workflow.sh\n"; exec $SHELL'

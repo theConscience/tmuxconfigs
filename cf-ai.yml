@@ -1,0 +1,28 @@
+name: cf-ai
+root: <%= @args[0] || "~/web_dev/repos/projects/covenant-fighters-ai-task" %>
+
+windows:
+  - editor:
+      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      # Synchronize all panes of this window, can be enabled before or after the pane commands run.
+      # 'before' represents legacy functionality and will be deprecated in a future release, in favour of 'after'
+      # synchronize: after
+      panes:
+        - nvim .
+        - cd covenant-fighters/ && pnpm dev
+        - cd covenant-fighters/ && git status
+  - ai:
+      panes:
+        - cd covenant-fighters/ && opencode
+  - codex:
+      panes:
+        - cd covenant-fighters/ && codex
+  - dev:
+      panes:
+        - cd covenant-fighters/ && pnpm run dev-nolog
+  - check:
+      panes:
+        - cd covenant-fighters/ && pnpm typecheck
+  - git:
+      panes:
+        - cd covenant-fighters/ && git status

@@ -1,0 +1,23 @@
+name: vue3
+root: <%= @args[0] || "/Users/ws/web_dev/repos/learn/js/vue3" %>
+
+windows:
+  - editor:
+      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      panes:
+        - nvim .
+        - bash -lc 'just dev; exec $SHELL'
+        - bash -lc 'git status; exec $SHELL'
+
+  - ai:
+      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      panes:
+        - bash -lc 'opencode; exec $SHELL'
+        - bash -lc 'codex; exec $SHELL'
+        - bash -lc 'claude; exec $SHELL'
+
+  - check:
+      layout: even-horizontal
+      panes:
+        - bash -lc 'just test-watch; exec $SHELL'
+        - bash -lc 'just status; exec $SHELL'

@@ -1,0 +1,56 @@
+# /Users/ws/.config/tmuxinator/psy-site.yml
+#
+# Main repo:
+#   tmuxinator start psy-site
+#
+# Worktree:
+#   tmuxinator start psy-site /Users/ws/web_dev/repos/projects/js/psy-site-003-booking-core
+#
+# Optional task id:
+#   PSY_TASK_ID=003 tmuxinator start psy-site /Users/ws/web_dev/repos/projects/js/psy-site-003-booking-core
+
+<%
+default_root = "/Users/ws/web_dev/repos/projects/js/psy-site"
+project_root = File.expand_path(@args[0] || ENV["PSY_SITE_ROOT"] || default_root)
+session_suffix = File.basename(project_root).gsub(/[^A-Za-z0-9_-]/, "-")
+task_id = ENV["PSY_TASK_ID"] || "003"
+%>
+
+name: psy-site-<%= session_suffix %>
+root: <%= project_root %>
+
+startup_window: editor
+startup_pane: 0
+
+windows:
+  - editor:
+      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      panes:
+        - bash -lc 'pwd; nvim .; exec "$SHELL"'
+        - bash -lc 'pwd; npm run dev; exec "$SHELL"'
+        - bash -lc 'pwd; git status; exec "$SHELL"'
+
+  - ai:
+      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      panes:
+        - bash -lc 'pwd; opencode; exec "$SHELL"'
+        - bash -lc 'pwd; codex; exec "$SHELL"'
+        - bash -lc 'pwd; claude; exec "$SHELL"'
+
+  - check:
+      layout: even-vertical
+      panes:
+        - bash -lc 'pwd; just check-setup; npm run test; npm run build; git diff --check; exec "$SHELL"'
+        - bash -lc 'pwd; git status --short; git log --oneline -8; exec "$SHELL"'
+
+  - flow:
+      layout: even-vertical
+      panes:
+        - bash -lc 'pwd; just flow <%= task_id %>; exec "$SHELL"'
+        - bash -lc 'pwd; just status <%= task_id %>; exec "$SHELL"'
+
+  - db:
+      layout: even-vertical
+      panes:
+        - bash -lc 'pwd; echo "DB/schema commands are task-sensitive. Run manually when relevant:"; echo "npx prisma generate"; echo "npx prisma migrate dev"; echo "npx prisma db seed"; exec "$SHELL"'
+        - bash -lc 'pwd; echo "Optional:"; echo "npx prisma studio"; exec "$SHELL"'
