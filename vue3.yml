@@ -18,9 +18,9 @@ windows:
   - ai:
       layout: tiled
       panes:
-        - opencode: bash -lc 'opencode; exec $SHELL'
-        - codex: bash -lc 'codex; exec $SHELL'
-        - claude: bash -lc 'claude; exec $SHELL'
+        - opencode: bash -lc 'opencode --continue || opencode; exec "$SHELL"'
+        - codex: bash -lc 'codex resume --last || codex; exec "$SHELL"'
+        - claude: bash -lc 'claude --continue || claude; exec "$SHELL"'
       focused_pane: opencode
 
   - check:
