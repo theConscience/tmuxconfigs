@@ -11,6 +11,8 @@ if ! command -v tmuxinator >/dev/null 2>&1; then
   exit 1
 fi
 
+ruby "$repo_dir/tools/audit-configs.rb"
+
 for config_path in "$repo_dir"/*.yml; do
   project_name="$(basename "$config_path" .yml)"
 

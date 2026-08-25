@@ -1,0 +1,31 @@
+name: __NAME__
+root: <%= @settings["root"] || @args[0] || File.expand_path("__ROOT__") %>
+
+startup_window: editor
+startup_pane: 0
+enable_pane_titles: true
+pane_title_position: top
+
+windows:
+  - editor:
+      layout: main-vertical
+      focused_pane: editor
+      panes:
+        - editor: bash -lc 'if command -v nvim >/dev/null 2>&1; then nvim .; else printf "%s\\n" "nvim is not installed"; fi; exec "$SHELL"'
+        - dev: bash -lc '__DEV__; exec "$SHELL"'
+        - git: bash -lc 'git status --short --branch; exec "$SHELL"'
+
+  - ai:
+      layout: tiled
+      focused_pane: opencode
+      panes:
+        - opencode: bash -lc '{ if command -v opencode >/dev/null 2>&1; then opencode --continue || opencode; else printf "%s\\n" "opencode is not installed"; fi; }; exec "$SHELL"'
+        - codex: bash -lc '{ if command -v codex >/dev/null 2>&1; then codex resume --last || codex; else printf "%s\\n" "codex is not installed"; fi; }; exec "$SHELL"'
+        - claude: bash -lc '{ if command -v claude >/dev/null 2>&1; then claude --continue || claude; else printf "%s\\n" "claude is not installed"; fi; }; exec "$SHELL"'
+
+  - check:
+      layout: even-horizontal
+      focused_pane: tests
+      panes:
+        - tests: bash -lc '__CHECK__; exec "$SHELL"'
+        - git: bash -lc 'git status --short --branch; exec "$SHELL"'

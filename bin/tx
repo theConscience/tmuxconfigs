@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+config_dir="${TMUXINATOR_CONFIG:-$repo_dir}"
+
+usage() {
+  cat <<'USAGE'
+Usage:
+  tx                         choose a project and optional worktree with fzf
+  tx PROJECT [ROOT]          start a project, optionally overriding its root
+  tx --list                  list available projects
+USAGE
+}
+
+projects() {
+  find "$config_dir" -maxdepth 1 -type f -name '*.yml' -exec basename {} .yml \; | sort
+}
+
+case "${1:-}" in
+  -h|--help)
+    usage
+    exit 0
+    ;;
+  --list)
+    projects
+    exit 0
+    ;;
+esac
+
+if ! command -v tmuxinator >/dev/null 2>&1; then
+  echo "tmuxinator is not installed" >&2
+  exit 1
+fi
+
+project="${1:-}"
+root_override="${2:-}"
+
+if [[ -z "$project" ]]; then
+  if ! command -v fzf >/dev/null 2>&1; then
+    echo "fzf is required for interactive project selection" >&2
+    echo "Run 'tx --list' or pass a project name explicitly." >&2
+    exit 1
+  fi
+
+  project="$(projects | fzf --prompt='tmux project> ' --height=60% --reverse)"
+  [[ -n "$project" ]] || exit 0
+fi
+
+if [[ ! -f "$config_dir/$project.yml" ]]; then
+  echo "unknown tmuxinator project: $project" >&2
+  exit 1
+fi
+
+if [[ -z "$root_override" ]] && command -v fzf >/dev/null 2>&1; then
+  rendered="$(TMUXINATOR_CONFIG="$config_dir" tmuxinator debug "$project" 2>/dev/null || true)"
+  default_root="$(printf '%s\n' "$rendered" | sed -n 's/^cd //p' | head -n 1)"
+
+  if [[ -n "$default_root" ]] && git -C "$default_root" rev-parse --git-dir >/dev/null 2>&1; then
+    choices="default\t$default_root"
+    while IFS= read -r worktree; do
+      [[ "$worktree" == "$default_root" ]] && continue
+      choices+=$'\n'"worktree\t$worktree"
+    done < <(git -C "$default_root" worktree list --porcelain | sed -n 's/^worktree //p')
+
+    selection="$(printf '%s\n' "$choices" | fzf --prompt='project root> ' --height=40% --reverse --with-nth=1,2)"
+    [[ -n "$selection" ]] || exit 0
+    if [[ "$selection" == worktree$'\t'* ]]; then
+      root_override="${selection#*$'\t'}"
+    fi
+  fi
+fi
+
+if [[ -n "$root_override" ]]; then
+  TMUXINATOR_CONFIG="$config_dir" exec tmuxinator start "$project" "$root_override"
+else
+  TMUXINATOR_CONFIG="$config_dir" exec tmuxinator start "$project"
+fi

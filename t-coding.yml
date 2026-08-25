@@ -1,7 +1,7 @@
 # /Users/ws/.config/tmuxinator/t-coding.yml
 
 name: t-coding
-root: ~/web_dev/repos/work/skillfolio/common.skillfolio-frontend-deploy/app
+root: <%= @settings["root"] || @args[0] || File.expand_path("~/web_dev/repos/work/skillfolio/common.skillfolio-frontend-deploy/app") %>
 
 # Optional tmux socket
 # socket_name: foo
@@ -37,6 +37,9 @@ root: ~/web_dev/repos/work/skillfolio/common.skillfolio-frontend-deploy/app
 
 # Specifies (by name or index) which window will be selected on project startup. If not set, the first window is used.
 startup_window: editor
+startup_pane: 0
+enable_pane_titles: true
+pane_title_position: top
 
 # Specifies (by index) which pane of the specified window will be selected on project startup. If not set, the first pane is used.
 # startup_pane: 1
@@ -51,8 +54,9 @@ windows:
       # Synchronize all panes of this window, can be enabled before or after the pane commands run.
       # 'before' represents legacy functionality and will be deprecated in a future release, in favour of 'after'
       # synchronize: after
+      focused_pane: editor
       panes:
-        - vim .
+        - editor: nvim .
         - git1:
           - cd ../
           - git diff --staged

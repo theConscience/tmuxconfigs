@@ -1,28 +1,39 @@
 name: cf-ai
-root: <%= @args[0] || "~/web_dev/repos/projects/covenant-fighters-ai-task" %>
+root: <%= @settings["root"] || @args[0] || File.expand_path("~/web_dev/repos/projects/covenant-fighters-ai-task") %>
+startup_window: editor
+startup_pane: 0
+enable_pane_titles: true
+pane_title_position: top
 
 windows:
   - editor:
-      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      layout: main-vertical
+
       # Synchronize all panes of this window, can be enabled before or after the pane commands run.
       # 'before' represents legacy functionality and will be deprecated in a future release, in favour of 'after'
       # synchronize: after
+      focused_pane: editor
       panes:
-        - nvim .
-        - cd covenant-fighters/ && pnpm dev
-        - cd covenant-fighters/ && git status
+        - editor: nvim .
+        - dev: cd covenant-fighters/ && pnpm dev
+        - git: cd covenant-fighters/ && git status
   - ai:
+      focused_pane: opencode
       panes:
-        - cd covenant-fighters/ && opencode
+        - opencode: cd covenant-fighters/ && { if command -v opencode >/dev/null 2>&1; then opencode --continue || opencode; else printf "%s\n" "opencode is not installed"; fi; }
   - codex:
+      focused_pane: codex
       panes:
-        - cd covenant-fighters/ && codex
+        - codex: cd covenant-fighters/ && { if command -v codex >/dev/null 2>&1; then codex resume --last || codex; else printf "%s\n" "codex is not installed"; fi; }
   - dev:
+      focused_pane: dev
       panes:
-        - cd covenant-fighters/ && pnpm run dev-nolog
+        - dev: cd covenant-fighters/ && pnpm run dev-nolog
   - check:
+      focused_pane: tests
       panes:
-        - cd covenant-fighters/ && pnpm typecheck
+        - tests: cd covenant-fighters/ && pnpm typecheck
   - git:
+      focused_pane: git
       panes:
-        - cd covenant-fighters/ && git status
+        - git: cd covenant-fighters/ && git status

@@ -1,32 +1,40 @@
 name: aa-ai
-root: <%= @args[0] || "~/web_dev/repos/projects/ai/3-ai-super-kit" %>
+root: <%= @settings["root"] || @args[0] || File.expand_path("~/web_dev/repos/projects/ai/3-ai-super-kit") %>
+startup_window: editor
+startup_pane: 0
+enable_pane_titles: true
+pane_title_position: top
 
 windows:
   - editor:
       layout: main-vertical
+      focused_pane: editor
       panes:
-        - nvim .
-        - bash -lc 'cd ai-architect-flow && git status; exec $SHELL'
-        - bash -lc 'cd ai-architect-v6-15-1-smoke-diversity-hotfix-package && git status; exec $SHELL'
-        - bash -lc 'cd ai-architect-v6-15-ab-measurement-policy-package && printf "A/B package (snapshot; no .git)\n"; exec $SHELL'
+        - editor: nvim .
+        - git: bash -lc 'cd ai-architect-flow && git status; exec "$SHELL"'
+        - git2: bash -lc 'cd ai-architect-v6-15-1-smoke-diversity-hotfix-package && git status; exec "$SHELL"'
+        - shell4: bash -lc 'cd ai-architect-v6-15-ab-measurement-policy-package && printf "A/B package (snapshot; no .git)\n"; exec "$SHELL"'
 
   - ai:
       layout: even-horizontal
+      focused_pane: opencode
       panes:
-        - bash -lc 'opencode; exec $SHELL'
-        - bash -lc 'codex; exec $SHELL'
-        - bash -lc 'claude; exec $SHELL'
+        - opencode: bash -lc '{ if command -v opencode >/dev/null 2>&1; then opencode --continue || opencode; else printf "%s\n" "opencode is not installed"; fi; }; exec "$SHELL"'
+        - codex: bash -lc '{ if command -v codex >/dev/null 2>&1; then codex resume --last || codex; else printf "%s\n" "codex is not installed"; fi; }; exec "$SHELL"'
+        - claude: bash -lc '{ if command -v claude >/dev/null 2>&1; then claude --continue || claude; else printf "%s\n" "claude is not installed"; fi; }; exec "$SHELL"'
 
   - repos:
       layout: even-horizontal
+      focused_pane: git
       panes:
-        - bash -lc 'cd ai-architect-flow && git status; exec $SHELL'
-        - bash -lc 'cd ai-architect-v6-15-1-smoke-diversity-hotfix-package && git status; exec $SHELL'
-        - bash -lc 'cd ai-architect-v6-15-ab-measurement-policy-package && exec $SHELL'
+        - git: bash -lc 'cd ai-architect-flow && git status; exec "$SHELL"'
+        - git2: bash -lc 'cd ai-architect-v6-15-1-smoke-diversity-hotfix-package && git status; exec "$SHELL"'
+        - shell3: bash -lc 'cd ai-architect-v6-15-ab-measurement-policy-package && exec "$SHELL"'
 
   - check:
       layout: even-horizontal
+      focused_pane: commands
       panes:
-        - bash -lc 'cd ai-architect-flow && just --list; exec $SHELL'
-        - bash -lc 'cd ai-architect-flow && printf "Commands — just verify | just qualify\n"; exec $SHELL'
-        - bash -lc 'cd ai-architect-v6-15-1-smoke-diversity-hotfix-package && printf "Command — bash tests/smoke-ai-workflow.sh\n"; exec $SHELL'
+        - commands: bash -lc 'cd ai-architect-flow && just --list; exec "$SHELL"'
+        - tests: bash -lc 'cd ai-architect-flow && printf "Commands — just verify | just qualify\n"; exec "$SHELL"'
+        - tests2: bash -lc 'cd ai-architect-v6-15-1-smoke-diversity-hotfix-package && printf "Command — bash tests/smoke-ai-workflow.sh\n"; exec "$SHELL"'

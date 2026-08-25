@@ -1,7 +1,7 @@
 # /Users/rumsk401562mb/.config/tmuxinator/hardcore-fp-v1.yml
 
 name: hardcore-fp-v1
-root: ~/web_dev/repos/learn/fp/hardcore_fn_programming_drboolean_v1/immutube/
+root: <%= @settings["root"] || @args[0] || File.expand_path("~/web_dev/repos/learn/fp/hardcore_fn_programming_drboolean_v1/immutube") %>
 
 # Optional tmux socket
 # socket_name: foo
@@ -37,6 +37,9 @@ root: ~/web_dev/repos/learn/fp/hardcore_fn_programming_drboolean_v1/immutube/
 
 # Specifies (by name or index) which window will be selected on project startup. If not set, the first window is used.
 startup_window: editor
+startup_pane: 0
+enable_pane_titles: true
+pane_title_position: top
 
 # Specifies (by index) which pane of the specified window will be selected on project startup. If not set, the first pane is used.
 # startup_pane: 1
@@ -47,12 +50,14 @@ startup_window: editor
 windows:
   - editor:
       # layout: main-vertical
-      layout: 2414,185x54,0,0{103x54,0,0,12,81x54,104,0,14}
+      layout: main-vertical
+
       # Synchronize all panes of this window, can be enabled before or after the pane commands run.
       # 'before' represents legacy functionality and will be deprecated in a future release, in favour of 'after'
       # synchronize: after
+      focused_pane: editor
       panes:
-        - vim .
-        - git status
+        - editor: nvim .
+        - git: git status
   - server: python3 -m http.server
   # - logs: tail -f log/development.log

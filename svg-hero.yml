@@ -1,7 +1,7 @@
 # /Users/vkaptsov01/.config/tmuxinator/svg-hero.yml
 
 name: svg-hero
-root: ~/web_dev/repos/projects/svg-hero
+root: <%= @settings["root"] || @args[0] || File.expand_path("~/web_dev/repos/projects/svg-hero") %>
 
 # Optional tmux socket
 # socket_name: foo
@@ -37,6 +37,9 @@ root: ~/web_dev/repos/projects/svg-hero
 
 # Specifies (by name or index) which window will be selected on project startup. If not set, the first window is used.
 startup_window: editor
+startup_pane: 0
+enable_pane_titles: true
+pane_title_position: top
 
 # Specifies (by index) which pane of the specified window will be selected on project startup. If not set, the first pane is used.
 # startup_pane: 1
@@ -46,12 +49,13 @@ startup_window: editor
 
 windows:
 - editor:
-    layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+    layout: even-horizontal
+
     # Synchronize all panes of this window, can be enabled before or after the pane commands run.
     # 'before' represents legacy functionality and will be deprecated in a future release, in favour of 'after'
     # synchronize: after
     panes:
-      - vim .
-      - npm run dev
-      - git status
+      - editor: nvim .
+      - dev: npm run dev
+      - git: git status
       # - guard

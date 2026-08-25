@@ -1,43 +1,55 @@
 name: ai-flow-kit-ai
-root: <%= @args[0] || "~/web_dev/repos/projects/ai" %>
+root: <%= @settings["root"] || @args[0] || File.expand_path("~/web_dev/repos/projects/ai") %>
+startup_window: overview
+startup_pane: 0
+enable_pane_titles: true
+pane_title_position: top
 
 windows:
   - overview:
       layout: even-horizontal
+      focused_pane: git
       panes:
-        - bash -lc 'cd 1-ai-easy-kit && git status --short --branch 2>/dev/null || true; exec $SHELL'
-        - bash -lc 'cd 1-ai-easy-kit/ai-agent-flow-kit && git status --short --branch; exec $SHELL'
-        - >-
-          bash -lc 'target="$(find 1-ai-easy-kit/adoptions -mindepth 1 -maxdepth 1 -type d -name "*-ai-flow-adoption" -print -quit)"; if [ -n "$target" ]; then cd "$target" && git status --short --branch; else printf "%s\n" "ADOPTION DOWNSTREAM NOT CREATED: 1-ai-easy-kit/adoptions/<app>-ai-flow-adoption"; cd 1-ai-easy-kit; fi; exec "$SHELL"'
+        - git: bash -lc 'cd 1-ai-easy-kit && git status --short --branch 2>/dev/null || true; exec "$SHELL"'
+        - git2: bash -lc 'cd 1-ai-easy-kit/ai-agent-flow-kit && git status --short --branch; exec "$SHELL"'
+        - task3: >-
+            bash -lc 'target="$(find 1-ai-easy-kit/adoptions -mindepth 1 -maxdepth 1 -type d -name "*-ai-flow-adoption" -print -quit)"; if [ -n "$target" ]; then cd "$target" && git status --short --branch; else printf "%s\n" "ADOPTION DOWNSTREAM NOT CREATED: 1-ai-easy-kit/adoptions/<app>-ai-flow-adoption"; cd 1-ai-easy-kit; fi; exec "$SHELL"'
 
   - workspace:
+      root: 1-ai-easy-kit
       layout: even-horizontal
+      focused_pane: editor
       panes:
-        - cd 1-ai-easy-kit && nvim .
-        - bash -lc 'cd 1-ai-easy-kit && printf "Easy workspace = %s\\n" "$PWD"; exec $SHELL'
-        - bash -lc 'cd 1-ai-easy-kit && git status --short --branch 2>/dev/null || true; exec $SHELL'
+        - editor: nvim .
+        - shell2: bash -lc 'printf "Easy workspace = %s\\n" "$PWD"; exec "$SHELL"'
+        - git: bash -lc 'git status --short --branch 2>/dev/null || true; exec "$SHELL"'
 
   - upstream:
-      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      root: 1-ai-easy-kit/ai-agent-flow-kit
+      layout: main-vertical
+
+      focused_pane: editor
       panes:
-        - cd 1-ai-easy-kit/ai-agent-flow-kit && nvim .
-        - bash -lc 'cd 1-ai-easy-kit/ai-agent-flow-kit && just --list; exec $SHELL'
-        - bash -lc 'cd 1-ai-easy-kit/ai-agent-flow-kit && git status --short --branch; exec $SHELL'
+        - editor: nvim .
+        - commands: bash -lc 'just --list; exec "$SHELL"'
+        - git: bash -lc 'git status --short --branch; exec "$SHELL"'
 
   - adoption:
       layout: even-horizontal
+      focused_pane: task1
       panes:
-        - >-
-          bash -lc 'target="$(find 1-ai-easy-kit/adoptions -mindepth 1 -maxdepth 1 -type d -name "*-ai-flow-adoption" -print -quit)"; if [ -n "$target" ]; then cd "$target" && nvim .; else printf "%s\n" "ADOPTION DOWNSTREAM NOT CREATED: create it from the upstream repository"; cd 1-ai-easy-kit; fi; exec "$SHELL"'
-        - >-
-          bash -lc 'target="$(find 1-ai-easy-kit/adoptions -mindepth 1 -maxdepth 1 -type d -name "*-ai-flow-adoption" -print -quit)"; if [ -n "$target" ]; then cd "$target"; else printf "%s\n" "Create one with: cd ai-agent-flow-kit && just new-adoption <app-id> ../adoptions/<app-id>-ai-flow-adoption"; cd 1-ai-easy-kit; fi; exec "$SHELL"'
-        - >-
-          bash -lc 'target="$(find 1-ai-easy-kit/adoptions -mindepth 1 -maxdepth 1 -type d -name "*-ai-flow-adoption" -print -quit)"; if [ -n "$target" ]; then cd "$target" && git status --short --branch; else printf "%s\n" "Waiting for an Easy Kit adoption repository"; cd 1-ai-easy-kit; fi; exec "$SHELL"'
+        - task1: >-
+            bash -lc 'target="$(find 1-ai-easy-kit/adoptions -mindepth 1 -maxdepth 1 -type d -name "*-ai-flow-adoption" -print -quit)"; if [ -n "$target" ]; then cd "$target" && nvim .; else printf "%s\n" "ADOPTION DOWNSTREAM NOT CREATED: create it from the upstream repository"; cd 1-ai-easy-kit; fi; exec "$SHELL"'
+        - task2: >-
+            bash -lc 'target="$(find 1-ai-easy-kit/adoptions -mindepth 1 -maxdepth 1 -type d -name "*-ai-flow-adoption" -print -quit)"; if [ -n "$target" ]; then cd "$target"; else printf "%s\n" "Create one with: cd ai-agent-flow-kit && just new-adoption <app-id> ../adoptions/<app-id>-ai-flow-adoption"; cd 1-ai-easy-kit; fi; exec "$SHELL"'
+        - task3: >-
+            bash -lc 'target="$(find 1-ai-easy-kit/adoptions -mindepth 1 -maxdepth 1 -type d -name "*-ai-flow-adoption" -print -quit)"; if [ -n "$target" ]; then cd "$target" && git status --short --branch; else printf "%s\n" "Waiting for an Easy Kit adoption repository"; cd 1-ai-easy-kit; fi; exec "$SHELL"'
 
   - ai:
       layout: even-horizontal
+      focused_pane: codex
       panes:
-        - bash -lc 'cd 1-ai-easy-kit && codex; exec $SHELL'
-        - bash -lc 'cd 1-ai-easy-kit/ai-agent-flow-kit && codex; exec $SHELL'
-        - >-
-          bash -lc 'target="$(find 1-ai-easy-kit/adoptions -mindepth 1 -maxdepth 1 -type d -name "*-ai-flow-adoption" -print -quit)"; if [ -n "$target" ]; then cd "$target" && codex; else printf "%s\n" "ADOPTION DOWNSTREAM NOT CREATED: 1-ai-easy-kit/adoptions/<app>-ai-flow-adoption"; cd 1-ai-easy-kit; fi; exec "$SHELL"'
+        - codex: bash -lc 'cd 1-ai-easy-kit && { if command -v codex >/dev/null 2>&1; then codex resume --last || codex; else printf "%s\n" "codex is not installed"; fi; }; exec "$SHELL"'
+        - codex2: bash -lc 'cd 1-ai-easy-kit/ai-agent-flow-kit && { if command -v codex >/dev/null 2>&1; then codex resume --last || codex; else printf "%s\n" "codex is not installed"; fi; }; exec "$SHELL"'
+        - task3: >-
+            bash -lc 'target="$(find 1-ai-easy-kit/adoptions -mindepth 1 -maxdepth 1 -type d -name "*-ai-flow-adoption" -print -quit)"; if [ -n "$target" ]; then cd "$target" && { if command -v codex >/dev/null 2>&1; then codex resume --last || codex; else printf "%s\n" "codex is not installed"; fi; }; else printf "%s\n" "ADOPTION DOWNSTREAM NOT CREATED: 1-ai-easy-kit/adoptions/<app>-ai-flow-adoption"; cd 1-ai-easy-kit; fi; exec "$SHELL"'

@@ -1,7 +1,7 @@
 # /Users/ws/.config/tmuxinator/learn-js.yml
 
 name: learn-js
-root: ~/web_dev/repos/learn/js/learn-js-intensive/js-20210921_victor-kaptsov
+root: <%= @settings["root"] || @args[0] || File.expand_path("~/web_dev/repos/learn/js/learn-js-intensive/js-20210921_victor-kaptsov") %>
 
 # Optional tmux socket
 # socket_name: foo
@@ -37,6 +37,9 @@ root: ~/web_dev/repos/learn/js/learn-js-intensive/js-20210921_victor-kaptsov
 
 # Specifies (by name or index) which window will be selected on project startup. If not set, the first window is used.
 startup_window: editor
+startup_pane: 0
+enable_pane_titles: true
+pane_title_position: top
 
 # Specifies (by index) which pane of the specified window will be selected on project startup. If not set, the first pane is used.
 # startup_pane: 1
@@ -51,9 +54,10 @@ windows:
       # Synchronize all panes of this window, can be enabled before or after the pane commands run.
       # 'before' represents legacy functionality and will be deprecated in a future release, in favour of 'after'
       # synchronize: after
+      focused_pane: editor
       panes:
-        - vim .
-        - git diff --staged
-        - git status
+        - editor: nvim .
+        - diff: git diff --staged
+        - git: git status
   # - server: bundle exec rails s
   # - logs: tail -f log/development.log

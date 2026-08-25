@@ -1,7 +1,11 @@
 # /Users/ws/.config/tmuxinator/zsh-configs.yml
 
 name: zsh-configs
-root: ~/web_dev/repos/zshconfigs
+root: <%= @settings["root"] || @args[0] || File.expand_path("~/web_dev/repos/zshconfigs") %>
+startup_window: editor
+startup_pane: 0
+enable_pane_titles: true
+pane_title_position: top
 
 # Optional tmux socket
 # socket_name: foo
@@ -50,9 +54,10 @@ windows:
       # Synchronize all panes of this window, can be enabled before or after the pane commands run.
       # 'before' represents legacy functionality and will be deprecated in a future release, in favour of 'after'
       # synchronize: after
+      focused_pane: editor
       panes:
-        - vim ~/.zshrc
-        - git diff --staged
+        - editor: vim ~/.zshrc
+        - diff: git diff --staged
         - git2:
           - clear
           - git status

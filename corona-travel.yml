@@ -1,18 +1,26 @@
 name: corona-travel
-root: <%= @args[0] || "~/web_dev/repos/work/unihotel/corona-travel" %>
+root: <%= @settings["root"] || @args[0] || File.expand_path("~/web_dev/repos/work/unihotel/corona-travel") %>
+startup_window: editor
+startup_pane: 0
+enable_pane_titles: true
+pane_title_position: top
 
 windows:
   - editor:
-      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      layout: main-vertical
+
+      focused_pane: editor
       panes:
-        - nvim .
-        - bash -lc 'pnpm dev; exec $SHELL'
-        - bash -lc 'git status; exec $SHELL'
+        - editor: nvim .
+        - dev: bash -lc 'pnpm dev; exec "$SHELL"'
+        - git: bash -lc 'git status; exec "$SHELL"'
 
   - ai:
+      focused_pane: opencode
       panes:
-        - bash -lc 'opencode; exec $SHELL'
+        - opencode: bash -lc '{ if command -v opencode >/dev/null 2>&1; then opencode --continue || opencode; else printf "%s\n" "opencode is not installed"; fi; }; exec "$SHELL"'
 
   - check:
+      focused_pane: tests
       panes:
-        - bash -lc 'pnpm typecheck; exec $SHELL'
+        - tests: bash -lc 'pnpm typecheck; exec "$SHELL"'

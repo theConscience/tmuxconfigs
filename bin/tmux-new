@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+
+require "pathname"
+
+repo_dir = Pathname.new(__dir__).parent
+name, root, dev_command, check_command = ARGV
+
+unless name&.match?(/\A[a-z0-9][a-z0-9_-]*\z/) && root
+  warn "Usage: tmux-new NAME ROOT [DEV_COMMAND] [CHECK_COMMAND]"
+  exit 2
+end
+
+destination = repo_dir.join("#{name}.yml")
+abort "refusing to overwrite #{destination}" if destination.exist?
+
+values = {
+  "__NAME__" => name,
+  "__ROOT__" => root.sub(%r{/$}, ""),
+  "__DEV__" => dev_command || "pnpm dev",
+  "__CHECK__" => check_command || "pnpm test",
+}
+
+content = repo_dir.join("templates/project.yml.template").read
+values.each { |token, value| content = content.gsub(token, value) }
+destination.write(content)
+puts "created #{destination}"

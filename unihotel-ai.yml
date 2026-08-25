@@ -1,5 +1,9 @@
 name: unihotel-ai
-root: <%= @args[0] || "~/web_dev/repos/work/unihotel" %>
+root: <%= @settings["root"] || @args[0] || File.expand_path("~/web_dev/repos/work/unihotel") %>
+startup_window: uh
+startup_pane: 0
+enable_pane_titles: true
+pane_title_position: top
 
 # Внешняя папка — не git-репозиторий, а контейнер для двух:
 #   unihotel_org/   Django-монолит, ветка ai/analysis
@@ -9,49 +13,57 @@ root: <%= @args[0] || "~/web_dev/repos/work/unihotel" %>
 
 windows:
   - uh:
-      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      layout: main-vertical
+
+      focused_pane: editor
       panes:
-        - cd unihotel_org && nvim .
-        - cd unihotel_org && bash -lc 'git status; exec $SHELL'
-        - cd unihotel_org && bash -lc 'exec $SHELL'
+        - editor: cd unihotel_org && nvim .
+        - git: cd unihotel_org && bash -lc 'git status; exec "$SHELL"'
+        - shell3: cd unihotel_org && bash -lc 'exec "$SHELL"'
 
   - ct:
-      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      layout: main-vertical
+
+      focused_pane: editor
       panes:
-        - cd corona-travel && nvim .
-        - cd corona-travel && bash -lc 'pnpm markup:serve; exec $SHELL'
-        - cd corona-travel && bash -lc 'git status; exec $SHELL'
+        - editor: cd corona-travel && nvim .
+        - dev: cd corona-travel && bash -lc 'pnpm markup:serve; exec "$SHELL"'
+        - git: cd corona-travel && bash -lc 'git status; exec "$SHELL"'
 
   # Четыре панели вместо трёх, поэтому tiled (2x2), а не сохранённый
   # layout от трёхпанельных окон — он рассчитан ровно на три.
   - ai:
       layout: tiled
+      focused_pane: claude
       panes:
-        - cd unihotel_org && bash -lc 'claude; exec $SHELL'
-        - cd unihotel_org && bash -lc 'codex; exec $SHELL'
-        - cd corona-travel && bash -lc 'claude; exec $SHELL'
-        - bash -lc 'opencode; exec $SHELL'
+        - claude: cd unihotel_org && bash -lc '{ if command -v claude >/dev/null 2>&1; then claude --continue || claude; else printf "%s\n" "claude is not installed"; fi; }; exec "$SHELL"'
+        - codex: cd unihotel_org && bash -lc '{ if command -v codex >/dev/null 2>&1; then codex resume --last || codex; else printf "%s\n" "codex is not installed"; fi; }; exec "$SHELL"'
+        - claude2: cd corona-travel && bash -lc '{ if command -v claude >/dev/null 2>&1; then claude --continue || claude; else printf "%s\n" "claude is not installed"; fi; }; exec "$SHELL"'
+        - opencode: bash -lc '{ if command -v opencode >/dev/null 2>&1; then opencode --continue || opencode; else printf "%s\n" "opencode is not installed"; fi; }; exec "$SHELL"'
 
   - run:
       layout: even-horizontal
+      focused_pane: shell1
       panes:
         # 127.0.0.1, не 0.0.0.0 — из-за Host/tenant middleware (правило F7).
         # Партнёр подменяется через ?site_host=kirov.coronatours.ru
-        - cd unihotel_org && bash -lc 'uv run python manage.py runserver 127.0.0.1:8000; exec $SHELL'
+        - shell1: cd unihotel_org && bash -lc 'uv run python manage.py runserver 127.0.0.1:8000; exec "$SHELL"'
         # Инфра (PostgreSQL/Redis/RabbitMQ/Memcached) — в контейнерах,
         # приложение через Compose не поднимаем (правило F1).
-        - cd unihotel_org && bash -lc 'exec $SHELL'
+        - shell2: cd unihotel_org && bash -lc 'exec "$SHELL"'
 
   - test:
       layout: even-horizontal
+      focused_pane: tests
       panes:
         # Команды печатаются, а не запускаются: оба дерева идут долго,
         # а make test делает uv lock — берём uv sync --frozen (правило F6).
-        - cd unihotel_org && bash -lc 'echo "uv run pytest -m run_before_push_prod --maxfail=1"; echo "uv run pytest -m run_before_push_prod_syn_tree --uh-test-tree --maxfail=1"; echo "uv run pytest tests/partners/test_partners_theming.py -vv"; exec $SHELL'
-        - cd corona-travel && bash -lc 'echo "pnpm qa:markup"; echo "pnpm qa:search"; echo "pnpm screenshots:reference"; exec $SHELL'
+        - tests: cd unihotel_org && bash -lc 'echo "uv run pytest -m run_before_push_prod --maxfail=1"; echo "uv run pytest -m run_before_push_prod_syn_tree --uh-test-tree --maxfail=1"; echo "uv run pytest tests/partners/test_partners_theming.py -vv"; exec "$SHELL"'
+        - shell2: cd corona-travel && bash -lc 'echo "pnpm qa:markup"; echo "pnpm qa:search"; echo "pnpm screenshots:reference"; exec "$SHELL"'
 
   - docs:
       layout: even-horizontal
+      focused_pane: editor
       panes:
-        - bash -lc 'nvim unihotel_org/agents/corona-frontend/v1-questionnaire.md; exec $SHELL'
-        - bash -lc 'exec $SHELL'
+        - editor: bash -lc 'nvim unihotel_org/agents/corona-frontend/v1-questionnaire.md; exec "$SHELL"'
+        - shell2: bash -lc 'exec "$SHELL"'

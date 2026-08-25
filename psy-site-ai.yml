@@ -10,7 +10,7 @@
 #   PSY_TASK_ID=003 tmuxinator start psy-site /Users/ws/web_dev/repos/projects/js/psy-site-003-booking-core
 
 <%
-default_root = "/Users/ws/web_dev/repos/projects/js/psy-site"
+default_root = File.expand_path("~/web_dev/repos/projects/js/psy-site")
 project_root = File.expand_path(@args[0] || ENV["PSY_SITE_ROOT"] || default_root)
 session_suffix = File.basename(project_root).gsub(/[^A-Za-z0-9_-]/, "-")
 task_id = ENV["PSY_TASK_ID"] || "003"
@@ -20,37 +20,46 @@ name: psy-site-<%= session_suffix %>
 root: <%= project_root %>
 
 startup_window: editor
+enable_pane_titles: true
+pane_title_position: top
 startup_pane: 0
 
 windows:
   - editor:
-      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      layout: main-vertical
+
+      focused_pane: editor
       panes:
-        - bash -lc 'pwd; nvim .; exec "$SHELL"'
-        - bash -lc 'pwd; npm run dev; exec "$SHELL"'
-        - bash -lc 'pwd; git status; exec "$SHELL"'
+        - editor: bash -lc 'pwd; nvim .; exec "$SHELL"'
+        - dev: bash -lc 'pwd; npm run dev; exec "$SHELL"'
+        - git: bash -lc 'pwd; git status; exec "$SHELL"'
 
   - ai:
-      layout: 2368,178x51,0,0{105x51,0,0,0,72x51,106,0[72x25,106,0,1,72x25,106,26,2]}
+      layout: tiled
+
+      focused_pane: opencode
       panes:
-        - bash -lc 'pwd; opencode; exec "$SHELL"'
-        - bash -lc 'pwd; codex; exec "$SHELL"'
-        - bash -lc 'pwd; claude; exec "$SHELL"'
+        - opencode: bash -lc 'pwd; { if command -v opencode >/dev/null 2>&1; then opencode --continue || opencode; else printf "%s\n" "opencode is not installed"; fi; }; exec "$SHELL"'
+        - codex: bash -lc 'pwd; { if command -v codex >/dev/null 2>&1; then codex resume --last || codex; else printf "%s\n" "codex is not installed"; fi; }; exec "$SHELL"'
+        - claude: bash -lc 'pwd; { if command -v claude >/dev/null 2>&1; then claude --continue || claude; else printf "%s\n" "claude is not installed"; fi; }; exec "$SHELL"'
 
   - check:
       layout: even-vertical
+      focused_pane: diff
       panes:
-        - bash -lc 'pwd; just check-setup; npm run test; npm run build; git diff --check; exec "$SHELL"'
-        - bash -lc 'pwd; git status --short; git log --oneline -8; exec "$SHELL"'
+        - diff: bash -lc 'pwd; just check-setup; npm run test; npm run build; git diff --check; exec "$SHELL"'
+        - git: bash -lc 'pwd; git status --short; git log --oneline -8; exec "$SHELL"'
 
   - flow:
       layout: even-vertical
+      focused_pane: shell1
       panes:
-        - bash -lc 'pwd; just flow <%= task_id %>; exec "$SHELL"'
-        - bash -lc 'pwd; just status <%= task_id %>; exec "$SHELL"'
+        - shell1: bash -lc 'pwd; just flow <%= task_id %>; exec "$SHELL"'
+        - shell2: bash -lc 'pwd; just status <%= task_id %>; exec "$SHELL"'
 
   - db:
       layout: even-vertical
+      focused_pane: shell1
       panes:
-        - bash -lc 'pwd; echo "DB/schema commands are task-sensitive. Run manually when relevant:"; echo "npx prisma generate"; echo "npx prisma migrate dev"; echo "npx prisma db seed"; exec "$SHELL"'
-        - bash -lc 'pwd; echo "Optional:"; echo "npx prisma studio"; exec "$SHELL"'
+        - shell1: bash -lc 'pwd; echo "DB/schema commands are task-sensitive. Run manually when relevant:"; echo "npx prisma generate"; echo "npx prisma migrate dev"; echo "npx prisma db seed"; exec "$SHELL"'
+        - shell2: bash -lc 'pwd; echo "Optional:"; echo "npx prisma studio"; exec "$SHELL"'

@@ -11,21 +11,21 @@ windows:
       layout: main-vertical
       panes:
         - nvim: nvim .
-        - dev: bash -lc 'just dev; exec $SHELL'
-        - git: bash -lc 'git status; exec $SHELL'
+        - dev: bash -lc 'just dev; exec "$SHELL"'
+        - git: bash -lc 'git status; exec "$SHELL"'
       focused_pane: nvim
 
   - ai:
       layout: tiled
-      panes:
-        - opencode: bash -lc 'opencode --continue || opencode; exec "$SHELL"'
-        - codex: bash -lc 'codex resume --last || codex; exec "$SHELL"'
-        - claude: bash -lc 'claude --continue || claude; exec "$SHELL"'
       focused_pane: opencode
+      panes:
+        - opencode: bash -lc '{ if command -v opencode >/dev/null 2>&1; then opencode --continue || opencode; else printf "%s\n" "opencode is not installed"; fi; }; exec "$SHELL"'
+        - codex: bash -lc '{ if command -v codex >/dev/null 2>&1; then codex resume --last || codex; else printf "%s\n" "codex is not installed"; fi; }; exec "$SHELL"'
+        - claude: bash -lc '{ if command -v claude >/dev/null 2>&1; then claude --continue || claude; else printf "%s\n" "claude is not installed"; fi; }; exec "$SHELL"'
 
   - check:
       layout: even-horizontal
       panes:
-        - tests: bash -lc 'just test-watch; exec $SHELL'
-        - status: bash -lc 'just status; exec $SHELL'
+        - tests: bash -lc 'just test-watch; exec "$SHELL"'
+        - status: bash -lc 'just status; exec "$SHELL"'
       focused_pane: tests
