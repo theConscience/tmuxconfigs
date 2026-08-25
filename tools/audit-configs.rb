@@ -49,7 +49,7 @@ Dir.glob(File.join(project_dir, "*.yml")).sort.each do |path|
     window_name = lines[window_index][/^  - ([^:]+):/, 1]
     next unless block.any? { |line| line.match?(/^\s+panes:\s*$/) }
 
-    focused_pane = block.filter_map { |line| line[/^\s+focused_pane:\s+([A-Za-z0-9_-]+)\s*$/, 1] }.first
+    focused_pane = block.map { |line| line[/^\s+focused_pane:\s+([A-Za-z0-9_-]+)\s*$/, 1] }.compact.first
     errors << "#{relative}: window #{window_name} has no valid focused_pane" unless focused_pane
 
     panes_index = block.index { |line| line.match?(/^\s+panes:\s*$/) }
