@@ -1,0 +1,47 @@
+name: tmux-configs-workbench
+root: <%= @settings["root"] || @args[0] || File.expand_path("~/web_dev/repos/tmuxconfigs") %>
+
+# A dedicated cockpit for maintaining this repository without mixing it with
+# product workspaces. Every long-running command returns to a useful shell.
+startup_window: overview
+startup_pane: 0
+enable_pane_titles: true
+pane_title_position: top
+
+windows:
+  - overview:
+      layout: main-vertical
+      focused_pane: editor
+      panes:
+        - editor: nvim .
+        - status: bash -lc 'git status --short --branch; exec "$SHELL"'
+        - recent: bash -lc 'git log --oneline --decorate -12; exec "$SHELL"'
+
+  - catalog:
+      layout: main-horizontal
+      focused_pane: search
+      panes:
+        - search: bash -lc 'printf "Tracked workspaces\n------------------\n"; find . -maxdepth 1 -name "*.yml" -print | sort; printf "\nSearch: rg <pattern>\n"; exec "$SHELL"'
+        - files: bash -lc 'printf "Tooling\n-------\n"; find bin templates tools -maxdepth 2 -type f -print 2>/dev/null | sort; exec "$SHELL"'
+
+  - verify:
+      layout: even-horizontal
+      focused_pane: verify
+      panes:
+        - verify: bash -lc './verify.sh; exec "$SHELL"'
+        - diff: bash -lc 'git diff --check; git diff --stat; exec "$SHELL"'
+
+  - history:
+      layout: main-vertical
+      focused_pane: branches
+      panes:
+        - branches: bash -lc 'git branch -avv; exec "$SHELL"'
+        - commits: bash -lc 'git log --graph --decorate --oneline --all -24; exec "$SHELL"'
+        - remotes: bash -lc 'git remote -v; exec "$SHELL"'
+
+  - scratch:
+      layout: tiled
+      focused_pane: shell
+      panes:
+        - shell: bash -l
+        - render: bash -lc 'tmuxinator debug tmux-configs-workbench 2>/dev/null || true; exec "$SHELL"'

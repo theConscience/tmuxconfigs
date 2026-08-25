@@ -41,6 +41,20 @@ tmux-new app ~/src/app     # create a config from the shared template
 Generated and modernized projects use portable roots, named panes, adaptive
 layouts, explicit focus, persistent shells, and resumable AI clients.
 
+For maintaining this repository itself, use the dedicated workbench session:
+
+```sh
+tx tmux-configs-workbench
+```
+
+It opens an overview, config catalog, verification, git history, and scratch
+workspace without disturbing product sessions. Pass another checkout as the
+root when needed:
+
+```sh
+tx tmux-configs-workbench /path/to/tmuxconfigs
+```
+
 ## Project conventions
 
 All tracked projects follow the same baseline:
