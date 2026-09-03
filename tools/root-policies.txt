@@ -1,0 +1,14 @@
+# Project               Policy
+#
+# A listed project may legitimately have no default root on this machine.
+# verify.sh still renders it and tests positional-root safety, but reports the
+# missing directory as expected instead of mixing it with unexpected warnings.
+# Keep the human-readable rationale in README.md in sync with this file.
+
+ca-ai                    worktree-dynamic
+cf-ai                    worktree-dynamic
+cloudblue-spa-customer   reference-offline
+corona-travel-ai         worktree-legacy
+hardcore-fp-v1           learning-recovery
+svg-hero                 learning-recovery
+uh-ai                    worktree-legacy

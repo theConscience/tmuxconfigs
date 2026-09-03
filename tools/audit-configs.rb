@@ -77,6 +77,22 @@ names.each do |name, files|
   errors << "duplicate project name #{name}: #{files.join(', ')}" if files.length > 1
 end
 
+policy_path = File.join(project_dir, "tools", "root-policies.txt")
+policies = {}
+File.readlines(policy_path, chomp: true).each_with_index do |line, index|
+  next if line.strip.empty? || line.lstrip.start_with?("#")
+
+  project, policy, extra = line.split(/\s+/, 3)
+  line_number = index + 1
+  errors << "root-policies.txt:#{line_number}: expected PROJECT POLICY" unless project && policy
+  errors << "root-policies.txt:#{line_number}: duplicate project #{project}" if policies.key?(project)
+  unless %w[worktree-dynamic worktree-legacy reference-offline learning-recovery].include?(policy)
+    errors << "root-policies.txt:#{line_number}: unknown policy #{policy}"
+  end
+  errors << "root-policies.txt:#{line_number}: unknown project #{project}" unless names.key?(project)
+  policies[project] = policy
+end
+
 if errors.empty?
   puts "config style audit passed"
 else

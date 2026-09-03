@@ -7,7 +7,7 @@ summary: Личная конфигурация tmux и tmuxinator — точка
 
 stage: Живая инфраструктура — 47 проверяемых профилей, ветка macos-air
 
-next: Разобрать семь optional-профилей без default-root и удалить только подтверждённо мёртвые
+next: Восстановить и проаудировать hardcore FP, затем найти исходники svg-hero
 next_ref: README.md
 
 docs:

@@ -5,6 +5,8 @@ set -euo pipefail
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 checked=0
 warnings=0
+expected_missing=0
+root_policy_path="$repo_dir/tools/root-policies.txt"
 
 if ! command -v tmuxinator >/dev/null 2>&1; then
   echo "tmuxinator is not installed" >&2
@@ -51,8 +53,14 @@ for config_path in "$repo_dir"/*.yml; do
   fi
 
   if [[ -n "$project_root" ]] && [[ ! -d "$project_root" ]]; then
-    echo "warning: $project_name root does not exist: $project_root" >&2
-    warnings=$((warnings + 1))
+    root_policy="$(awk -v project="$project_name" '$1 == project { print $2; exit }' "$root_policy_path")"
+    if [[ -n "$root_policy" ]]; then
+      echo "info: $project_name root is intentionally absent ($root_policy): $project_root" >&2
+      expected_missing=$((expected_missing + 1))
+    else
+      echo "warning: $project_name root does not exist: $project_root" >&2
+      warnings=$((warnings + 1))
+    fi
   fi
 
   checked=$((checked + 1))
@@ -62,4 +70,4 @@ socket_name="tmuxconfigs-verify-$$"
 tmux -L "$socket_name" -f "$repo_dir/.tmux.conf" new-session -d -s tmuxconfigs-verify
 tmux -L "$socket_name" kill-server
 
-echo "verified $checked tmuxinator configs and .tmux.conf ($warnings root warnings)"
+echo "verified $checked tmuxinator configs and .tmux.conf ($warnings root warnings, $expected_missing expected missing roots)"

@@ -113,17 +113,21 @@ Parameterized projects accept an alternate root as their first argument:
 tmuxinator start ca-ai /path/to/project
 ```
 
-## Optional project roots
+## Profile lifecycle and optional roots
 
-The following valid configs currently have no default directory on this
-machine. They can still be started by supplying an existing root:
+Missing roots listed in `tools/root-policies.txt` are intentional lifecycle
+states, not broken YAML. They are still rendered and checked by `verify.sh`.
 
-| Project | Missing default root |
-| --- | --- |
-| `ca-ai` | `~/web_dev/repos/projects/channel-admin-ai-task` |
-| `cf-ai` | `~/web_dev/repos/projects/covenant-fighters-ai-task` |
-| `cloudblue-spa-customer` | `~/Documents/web_dev/repos/work/cloudblue/spa-customer` |
-| `corona-travel-ai` | `~/web_dev/repos/work/unihotel/corona-travel-ai-task` |
-| `hardcore-fp-v1` | `~/web_dev/repos/learn/fp/hardcore_fn_programming_drboolean_v1/immutube` |
-| `svg-hero` | `~/web_dev/repos/projects/svg-hero` |
-| `uh-ai` | `~/web_dev/repos/work/unihotel/unihotel_org-ai-task` |
+| Project | Policy | Meaning |
+| --- | --- | --- |
+| `ca-ai` | `worktree-dynamic` | Channel Admin task worktree; pass its generated `channel-admin-<task>` directory. |
+| `cf-ai` | `worktree-dynamic` | Covenant Fighters helper creates `covenant-fighters-ai-<task>` and passes it explicitly. |
+| `cloudblue-spa-customer` | `reference-offline` | Reference Vue code that is not checked out on this machine. |
+| `corona-travel-ai` | `worktree-legacy` | Legacy single-repo AI worktree convention; no current automatic creator was found. |
+| `uh-ai` | `worktree-legacy` | Legacy Unihotel single-repo AI worktree convention; no current automatic creator was found. |
+| `hardcore-fp-v1` | `learning-recovery` | FP learning project exists remotely and awaits a local restore and modernization audit. |
+| `svg-hero` | `learning-recovery` | Only the tmuxinator profile was recovered; the project source still needs to be found. |
+
+`unihotel-ai` is deliberately not in this list: its existing parent root opens
+both `unihotel_org` and `corona-travel` for the current cross-repository Corona
+workflow.
