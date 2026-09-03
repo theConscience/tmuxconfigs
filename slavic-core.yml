@@ -1,0 +1,46 @@
+name: slavic-core
+root: <%= @settings["root"] || [@args[0]].compact.map { |a| File.expand_path(a) }.find { |p| File.directory?(p) } || File.expand_path("~/web_dev/repos/projects/slavic-core") %>
+
+startup_window: brief
+startup_pane: 0
+enable_pane_titles: true
+pane_title_position: top
+
+windows:
+  - brief:
+      layout: main-vertical
+      focused_pane: brief
+      panes:
+        - brief: bash -lc 'nvim docs/briefs/001-telegram-bot-scaffold.md; exec "$SHELL"'
+        - status: bash -lc 'git status --short --branch; exec "$SHELL"'
+        - shell: bash -lc 'exec "$SHELL"'
+
+  - claude:
+      layout: even-horizontal
+      focused_pane: claude
+      panes:
+        - claude: bash -lc '{ if command -v claude >/dev/null 2>&1; then claude --continue || claude; else printf "%s\n" "claude is not installed"; fi; }; exec "$SHELL"'
+        - brief: bash -lc 'sed -n "1,240p" docs/briefs/001-telegram-bot-scaffold.md; exec "$SHELL"'
+
+  - editor:
+      layout: main-vertical
+      focused_pane: editor
+      panes:
+        - editor: bash -lc 'nvim .; exec "$SHELL"'
+        - git: bash -lc 'git status --short --branch; exec "$SHELL"'
+        - shell: bash -lc 'exec "$SHELL"'
+
+  - run:
+      layout: even-horizontal
+      focused_pane: shell
+      panes:
+        - shell: bash -lc 'printf "%s\n" "Runtime is not scaffolded yet. Follow the Stage 1 brief."; exec "$SHELL"'
+        - python: bash -lc 'python3 --version; exec "$SHELL"'
+
+  - test:
+      layout: even-horizontal
+      focused_pane: tests
+      panes:
+        - tests: >-
+            bash -lc 'printf "%s\n" "Tests are not scaffolded yet. Expected future command: uv run pytest"; exec "$SHELL"'
+        - git: bash -lc 'git diff --check; git status --short --branch; exec "$SHELL"'
