@@ -2,7 +2,7 @@
 
 require "pathname"
 
-repo_dir = Pathname.new(__dir__).parent
+repo_dir = Pathname.new(__FILE__).realpath.dirname.parent
 name, root, dev_command, check_command = ARGV
 
 unless name&.match?(/\A[a-z0-9][a-z0-9_-]*\z/) && root

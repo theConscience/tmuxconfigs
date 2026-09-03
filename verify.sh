@@ -13,6 +13,19 @@ fi
 
 ruby "$repo_dir/tools/audit-configs.rb"
 
+# Launchers are installed as symlinks, so they must still resolve the repo.
+launcher_dir="$(mktemp -d "${TMPDIR:-/tmp}/tmuxconfigs-launchers.XXXXXX")"
+trap 'rm -rf "$launcher_dir"' EXIT
+ln -s "$repo_dir/bin/tx" "$launcher_dir/tx"
+if ! diff -u <("$repo_dir/bin/tx" --list) <("$launcher_dir/tx" --list); then
+  echo "tx resolves a different config directory through a symlink" >&2
+  exit 1
+fi
+if "$launcher_dir/tx" --list | grep -q '^\.'; then
+  echo "tx lists a hidden metadata file as a project" >&2
+  exit 1
+fi
+
 for config_path in "$repo_dir"/*.yml; do
   project_name="$(basename "$config_path" .yml)"
 
