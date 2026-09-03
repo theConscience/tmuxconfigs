@@ -1,5 +1,5 @@
 name: aa-ai
-root: <%= @settings["root"] || @args[0] || File.expand_path("~/web_dev/repos/projects/ai/3-ai-super-kit") %>
+root: <%= @settings["root"] || [@args[0]].compact.map { |a| File.expand_path(a) }.find { |p| File.directory?(p) } || File.expand_path("~/web_dev/repos/projects/ai/3-ai-super-kit") %>
 startup_window: editor
 startup_pane: 0
 enable_pane_titles: true

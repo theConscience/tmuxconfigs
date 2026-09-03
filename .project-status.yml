@@ -1,0 +1,21 @@
+schema: portfolio-status/v1
+
+name: tmuxconfigs
+zone: infra
+anchor: 🛠 tmuxconfigs
+summary: Личная конфигурация tmux и tmuxinator — точка входа во все проекты портфеля.
+
+stage: Живая инфраструктура — 47 проверяемых профилей, ветка macos-air
+
+next: Разобрать семь optional-профилей без default-root и удалить только подтверждённо мёртвые
+next_ref: README.md
+
+docs:
+  - README.md
+  - v-notes-ai.yml
+
+tmuxinator:
+  - tmux-configs
+  - tmux-configs-workbench
+
+updated: 2026-09-03

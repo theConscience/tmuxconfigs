@@ -11,7 +11,8 @@
 
 <%
 default_root = File.expand_path("~/web_dev/repos/projects/js/psy-site")
-project_root = File.expand_path(@args[0] || ENV["PSY_SITE_ROOT"] || default_root)
+arg_root = [@args[0]].compact.map { |a| File.expand_path(a) }.find { |p| File.directory?(p) }
+project_root = arg_root || File.expand_path(ENV["PSY_SITE_ROOT"] || default_root)
 session_suffix = File.basename(project_root).gsub(/[^A-Za-z0-9_-]/, "-")
 task_id = ENV["PSY_TASK_ID"] || "003"
 %>

@@ -1,5 +1,5 @@
 name: __NAME__
-root: <%= @settings["root"] || @args[0] || File.expand_path("__ROOT__") %>
+root: <%= @settings["root"] || [@args[0]].compact.map { |a| File.expand_path(a) }.find { |p| File.directory?(p) } || File.expand_path("__ROOT__") %>
 
 startup_window: editor
 startup_pane: 0

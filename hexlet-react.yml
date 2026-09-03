@@ -2,7 +2,7 @@
 
 name: hexlet-react
   # root: ~/web_dev/repos/learn/hexlet/hexlet-react/
-root: <%= @settings["root"] || @args[0] || File.expand_path("~/web_dev/repos/learn/hexlet/hexlet-react") %>
+root: <%= @settings["root"] || [@args[0]].compact.map { |a| File.expand_path(a) }.find { |p| File.directory?(p) } || File.expand_path("~/web_dev/repos/learn/hexlet/hexlet-react") %>
 
 
 # Optional tmux socket

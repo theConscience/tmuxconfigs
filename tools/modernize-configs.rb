@@ -31,10 +31,12 @@ def portable_path(path)
 end
 
 def normalize_root(line)
-  return line if line.include?('@settings["root"]') || line.include?("project_root")
+  return line if line.include?("project_root") || line.include?("File.directory?")
 
   value = line.sub(/^root:\s*/, "").strip
   default = if (match = value.match(/@args\[0\]\s*\|\|\s*["']([^"']+)["']/))
+    portable_path(match[1])
+  elsif (match = value.match(/File\.expand_path\(["']([^"']+)["']\)/))
     portable_path(match[1])
   elsif !value.include?("<%")
     portable_path(value)
@@ -42,7 +44,7 @@ def normalize_root(line)
 
   return line unless default
 
-  %(root: <%= @settings["root"] || @args[0] || File.expand_path("#{default}") %>\n)
+  %(root: <%= @settings["root"] || [@args[0]].compact.map { |a| File.expand_path(a) }.find { |p| File.directory?(p) } || File.expand_path("#{default}") %>\n)
 end
 
 def pane_name(command, index)

@@ -55,11 +55,23 @@ root when needed:
 tx tmux-configs-workbench /path/to/tmuxconfigs
 ```
 
+For portfolio planning in the Obsidian vault, use:
+
+```sh
+tx v-notes-ai
+```
+
+The workspace opens the vault dashboard, resumable AI clients, an editor, and
+terminal views for project notes, open tasks, roadmaps, and recent changes. Its
+default root is `~/STORAGE/V_Notes` and can be overridden with an existing
+directory.
+
 ## Project conventions
 
 All tracked projects follow the same baseline:
 
-- the root can be overridden with `@settings["root"]` or the first argument;
+- the root can be overridden with `@settings["root"]` or an existing directory
+  passed as the first argument; launcher/service arguments are ignored;
 - named layouts replace terminal-size-specific layout strings;
 - panes have stable titles and every window declares its focused pane;
 - OpenCode, Codex, and Claude resume their latest session, fall back to a new

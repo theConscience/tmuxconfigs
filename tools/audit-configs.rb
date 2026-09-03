@@ -20,6 +20,9 @@ Dir.glob(File.join(project_dir, "*.yml")).sort.each do |path|
   unless root&.include?('@settings["root"]') || root&.include?("project_root")
     errors << "#{relative}: root must support @settings[\"root\"] or a project_root override"
   end
+  if root&.include?('@args[0]') && !root.include?("File.directory?")
+    errors << "#{relative}: root must ignore non-directory positional arguments"
+  end
 
   lines.each_with_index do |line, index|
     line_number = index + 1

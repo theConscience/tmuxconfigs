@@ -1,7 +1,7 @@
 # /Users/ws/.config/tmuxinator/zsh-configs.yml
 
 name: zsh-configs
-root: <%= @settings["root"] || @args[0] || File.expand_path("~/web_dev/repos/zshconfigs") %>
+root: <%= @settings["root"] || [@args[0]].compact.map { |a| File.expand_path(a) }.find { |p| File.directory?(p) } || File.expand_path("~/web_dev/repos/zshconfigs") %>
 startup_window: editor
 startup_pane: 0
 enable_pane_titles: true

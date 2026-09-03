@@ -1,7 +1,7 @@
 # /Users/ws/.config/tmuxinator/covenant-fighters.yml.yml
 
 name: covenant-fighters
-root: <%= @settings["root"] || @args[0] || File.expand_path("~/web_dev/repos/projects/covenant-fighters") %>
+root: <%= @settings["root"] || [@args[0]].compact.map { |a| File.expand_path(a) }.find { |p| File.directory?(p) } || File.expand_path("~/web_dev/repos/projects/covenant-fighters") %>
 
 
 # Optional tmux socket

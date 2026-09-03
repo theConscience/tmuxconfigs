@@ -1,5 +1,5 @@
 name: tmux-configs-workbench
-root: <%= @settings["root"] || @args[0] || File.expand_path("~/web_dev/repos/tmuxconfigs") %>
+root: <%= @settings["root"] || [@args[0]].compact.map { |a| File.expand_path(a) }.find { |p| File.directory?(p) } || File.expand_path("~/web_dev/repos/tmuxconfigs") %>
 
 # A dedicated cockpit for maintaining this repository without mixing it with
 # product workspaces. Every long-running command returns to a useful shell.
@@ -21,7 +21,8 @@ windows:
       layout: main-horizontal
       focused_pane: search
       panes:
-        - search: bash -lc 'printf "Tracked workspaces\n------------------\n"; find . -maxdepth 1 -name "*.yml" -print | sort; printf "\nSearch: rg <pattern>\n"; exec "$SHELL"'
+        - search: >-
+            bash -lc 'printf "Tracked workspaces\n------------------\n"; find . -maxdepth 1 -name "*.yml" -print | sort; printf "\nSearch: rg <pattern>\n"; exec "$SHELL"'
         - files: bash -lc 'printf "Tooling\n-------\n"; find bin templates tools -maxdepth 2 -type f -print 2>/dev/null | sort; exec "$SHELL"'
 
   - verify:

@@ -1,0 +1,42 @@
+name: v-notes-ai
+root: <%= @settings["root"] || [@args[0]].compact.map { |a| File.expand_path(a) }.find { |p| File.directory?(p) } || File.expand_path("~/STORAGE/V_Notes") %>
+
+startup_window: dashboard
+startup_pane: 0
+enable_pane_titles: true
+pane_title_position: top
+
+windows:
+  # Быстрый вход в vault: домашний dashboard и две живые выборки.
+  - dashboard:
+      layout: main-vertical
+      focused_pane: home
+      panes:
+        - home: bash -lc 'if command -v nvim >/dev/null 2>&1; then nvim "00 System/Dashboards/Home.md"; else printf "%s\n" "nvim is not installed"; fi; exec "$SHELL"'
+        - tasks: bash -lc 'printf "%s\n" "Open project tasks" "------------------"; if command -v rg >/dev/null 2>&1; then rg --line-number --glob "*.md" "^[[:space:]]*[-*][[:space:]]+\\[ \\]" "50 Projects/Active" "40 Areas/Work" "10 Inbox" || true; else printf "%s\n" "rg is not installed"; fi; exec "$SHELL"'
+        - roadmaps: bash -lc 'printf "%s\n" "Plans and roadmaps" "------------------"; find "50 Projects/Active" "40 Areas/Work" -type f \( -iname "*roadmap*.md" -o -iname "*plan*.md" -o -iname "*stage*.md" -o -iname "*этап*.md" \) -print 2>/dev/null | sort; exec "$SHELL"'
+
+  # Все агенты работают с одним vault и могут читать/обновлять его Markdown.
+  - ai:
+      layout: tiled
+      focused_pane: codex
+      panes:
+        - codex: bash -lc '{ if command -v codex >/dev/null 2>&1; then codex resume --last || codex; else printf "%s\n" "codex is not installed"; fi; }; exec "$SHELL"'
+        - opencode: bash -lc '{ if command -v opencode >/dev/null 2>&1; then opencode --continue || opencode; else printf "%s\n" "opencode is not installed"; fi; }; exec "$SHELL"'
+        - claude: bash -lc '{ if command -v claude >/dev/null 2>&1; then claude --continue || claude; else printf "%s\n" "claude is not installed"; fi; }; exec "$SHELL"'
+
+  - vault:
+      layout: main-vertical
+      focused_pane: editor
+      panes:
+        - editor: bash -lc 'if command -v nvim >/dev/null 2>&1; then nvim .; else printf "%s\n" "nvim is not installed"; fi; exec "$SHELL"'
+        - shell: bash -l
+
+  # Терминальная сводка полезна агентам и не зависит от Obsidian-плагинов.
+  - review:
+      layout: even-horizontal
+      focused_pane: projects
+      panes:
+        - projects: bash -lc 'printf "%s\n" "Project notes" "-------------"; find "50 Projects/Active" "40 Areas/Work" -type f -name "*.md" -print 2>/dev/null | sort; exec "$SHELL"'
+        - tasks: bash -lc 'printf "%s\n" "All open tasks" "--------------"; if command -v rg >/dev/null 2>&1; then rg --line-number --glob "*.md" "^[[:space:]]*[-*][[:space:]]+\\[ \\]" . || true; else printf "%s\n" "rg is not installed"; fi; exec "$SHELL"'
+        - recent: bash -lc 'printf "%s\n" "Changed in the last 14 days" "---------------------------"; find "50 Projects/Active" "40 Areas/Work" -type f -name "*.md" -mtime -14 -print 2>/dev/null | sort; exec "$SHELL"'

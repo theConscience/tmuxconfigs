@@ -1,7 +1,7 @@
 # /Users/ws/.config/tmuxinator/learn-js.yml
 
 name: learn-js
-root: <%= @settings["root"] || @args[0] || File.expand_path("~/web_dev/repos/learn/js/learn-js-intensive/js-20210921_victor-kaptsov") %>
+root: <%= @settings["root"] || [@args[0]].compact.map { |a| File.expand_path(a) }.find { |p| File.directory?(p) } || File.expand_path("~/web_dev/repos/learn/js/learn-js-intensive/js-20210921_victor-kaptsov") %>
 
 # Optional tmux socket
 # socket_name: foo

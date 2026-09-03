@@ -23,6 +23,20 @@ for config_path in "$repo_dir"/*.yml; do
   fi
 
   project_root="$(printf '%s\n' "$rendered" | sed -n 's/^cd //p' | head -n 1)"
+
+  # Some tmuxinator aliases forward their own positional arguments to ERB.
+  # A project name must not be mistaken for a relative root directory.
+  if ! guarded_rendered="$(TMUXINATOR_CONFIG="$repo_dir" tmuxinator debug "$project_name" "$project_name" 2>&1)"; then
+    echo "invalid tmuxinator config with service argument: $project_name" >&2
+    echo "$guarded_rendered" >&2
+    exit 1
+  fi
+  guarded_root="$(printf '%s\n' "$guarded_rendered" | sed -n 's/^cd //p' | head -n 1)"
+  if [[ "$guarded_root" != "$project_root" ]]; then
+    echo "unsafe positional root override: $project_name ($project_root -> $guarded_root)" >&2
+    exit 1
+  fi
+
   if [[ -n "$project_root" ]] && [[ ! -d "$project_root" ]]; then
     echo "warning: $project_name root does not exist: $project_root" >&2
     warnings=$((warnings + 1))

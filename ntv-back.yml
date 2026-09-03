@@ -1,7 +1,7 @@
 # /Users/ws/.config/tmuxinator/ntv-back.yml
 
 name: ntv-back
-root: <%= @settings["root"] || @args[0] || File.expand_path("~/web_dev/repos/work/ntv/ntv-back") %>
+root: <%= @settings["root"] || [@args[0]].compact.map { |a| File.expand_path(a) }.find { |p| File.directory?(p) } || File.expand_path("~/web_dev/repos/work/ntv/ntv-back") %>
 
 # Optional tmux socket
 # socket_name: foo
