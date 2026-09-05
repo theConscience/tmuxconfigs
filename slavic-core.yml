@@ -7,26 +7,29 @@ enable_pane_titles: true
 pane_title_position: top
 
 windows:
+  # Активный бриф берётся из .project-status.yml (next_ref), поэтому профиль
+  # не нужно править после каждой выполненной задачи.
   - brief:
       layout: main-vertical
       focused_pane: brief
       panes:
-        - brief: bash -lc 'nvim docs/briefs/001-telegram-bot-scaffold.md; exec "$SHELL"'
+        - brief: bash -lc 'ref="$(sed -n "s/^next_ref:[[:space:]]*//p" .project-status.yml 2>/dev/null | head -n 1)"; [ -n "$ref" ] && [ -f "$ref" ] || ref=README.md; if command -v nvim >/dev/null 2>&1; then nvim "$ref"; else printf "%s\n" "nvim is not installed ($ref)"; fi; exec "$SHELL"'
         - status: bash -lc 'git status --short --branch; exec "$SHELL"'
         - shell: bash -lc 'exec "$SHELL"'
 
-  - claude:
-      layout: even-horizontal
-      focused_pane: claude
+  - ai:
+      layout: tiled
+      focused_pane: codex
       panes:
+        - codex: bash -lc '{ if command -v codex >/dev/null 2>&1; then codex resume --last || codex; else printf "%s\n" "codex is not installed"; fi; }; exec "$SHELL"'
         - claude: bash -lc '{ if command -v claude >/dev/null 2>&1; then claude --continue || claude; else printf "%s\n" "claude is not installed"; fi; }; exec "$SHELL"'
-        - brief: bash -lc 'sed -n "1,240p" docs/briefs/001-telegram-bot-scaffold.md; exec "$SHELL"'
+        - opencode: bash -lc '{ if command -v opencode >/dev/null 2>&1; then opencode --continue || opencode; else printf "%s\n" "opencode is not installed"; fi; }; exec "$SHELL"'
 
   - editor:
       layout: main-vertical
       focused_pane: editor
       panes:
-        - editor: bash -lc 'nvim .; exec "$SHELL"'
+        - editor: bash -lc 'if command -v nvim >/dev/null 2>&1; then nvim .; else printf "%s\n" "nvim is not installed"; fi; exec "$SHELL"'
         - git: bash -lc 'git status --short --branch; exec "$SHELL"'
         - shell: bash -lc 'exec "$SHELL"'
 
@@ -34,7 +37,7 @@ windows:
       layout: even-horizontal
       focused_pane: shell
       panes:
-        - shell: bash -lc 'printf "%s\n" "Runtime is not scaffolded yet. Follow the Stage 1 brief."; exec "$SHELL"'
+        - shell: bash -lc 'printf "%s\n" "Runtime is not scaffolded yet. Follow the current brief."; exec "$SHELL"'
         - python: bash -lc 'python3 --version; exec "$SHELL"'
 
   - test:

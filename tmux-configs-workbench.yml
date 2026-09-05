@@ -13,9 +13,18 @@ windows:
       layout: main-vertical
       focused_pane: editor
       panes:
-        - editor: nvim .
+        - editor: bash -lc 'if command -v nvim >/dev/null 2>&1; then nvim .; else printf "%s\n" "nvim is not installed"; fi; exec "$SHELL"'
         - status: bash -lc 'git status --short --branch; exec "$SHELL"'
         - recent: bash -lc 'git log --oneline --decorate -12; exec "$SHELL"'
+
+  # Агенты работают с самим репозиторием конфигов, как и в продуктовых профилях.
+  - ai:
+      layout: tiled
+      focused_pane: codex
+      panes:
+        - codex: bash -lc '{ if command -v codex >/dev/null 2>&1; then codex resume --last || codex; else printf "%s\n" "codex is not installed"; fi; }; exec "$SHELL"'
+        - claude: bash -lc '{ if command -v claude >/dev/null 2>&1; then claude --continue || claude; else printf "%s\n" "claude is not installed"; fi; }; exec "$SHELL"'
+        - opencode: bash -lc '{ if command -v opencode >/dev/null 2>&1; then opencode --continue || opencode; else printf "%s\n" "opencode is not installed"; fi; }; exec "$SHELL"'
 
   - catalog:
       layout: main-horizontal
@@ -29,7 +38,7 @@ windows:
       layout: even-horizontal
       focused_pane: verify
       panes:
-        - verify: bash -lc './verify.sh; exec "$SHELL"'
+        - verify: bash -lc './verify.sh; printf "\nverify exit=%s\n" "$?"; exec "$SHELL"'
         - diff: bash -lc 'git diff --check; git diff --stat; exec "$SHELL"'
 
   - history:
@@ -45,4 +54,6 @@ windows:
       focused_pane: shell
       panes:
         - shell: bash -l
-        - render: bash -lc 'tmuxinator debug tmux-configs-workbench 2>/dev/null || true; exec "$SHELL"'
+        # Рендерим профиль из текущего checkout, а не из установленного симлинка,
+        # и показываем настоящий exit code вместо тихого "|| true".
+        - render: bash -lc 'TMUXINATOR_CONFIG="$PWD" tmuxinator debug tmux-configs-workbench "$PWD"; printf "\ndebug exit=%s\n" "$?"; exec "$SHELL"'

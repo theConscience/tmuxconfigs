@@ -12,10 +12,11 @@ next_ref: README.md
 
 docs:
   - README.md
+  - AGENTS.md
   - v-notes-ai.yml
 
 tmuxinator:
   - tmux-configs
   - tmux-configs-workbench
 
-updated: 2026-09-03
+updated: 2026-09-05

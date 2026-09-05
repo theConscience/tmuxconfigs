@@ -47,9 +47,9 @@ For maintaining this repository itself, use the dedicated workbench session:
 tx tmux-configs-workbench
 ```
 
-It opens an overview, config catalog, verification, git history, and scratch
-workspace without disturbing product sessions. Pass another checkout as the
-root when needed:
+It opens an overview, resumable AI clients, a config catalog, verification, git
+history, and a scratch workspace without disturbing product sessions. Pass
+another checkout as the root when needed:
 
 ```sh
 tx tmux-configs-workbench /path/to/tmuxconfigs
@@ -81,6 +81,10 @@ All tracked projects follow the same baseline:
 
 Run `ruby tools/modernize-configs.rb` after importing an older config. The
 command is idempotent. New configs should be created with `tmux-new`.
+
+Coding agents working in this repository follow [AGENTS.md](AGENTS.md): always
+run `./verify.sh`, keep `tools/root-policies.txt` and the README table in sync,
+and never delete a profile without an explicit decision.
 
 ## Session restore
 
