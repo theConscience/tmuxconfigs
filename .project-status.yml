@@ -5,7 +5,7 @@ zone: infra
 anchor: 🛠 tmuxconfigs
 summary: Личная конфигурация tmux и tmuxinator — точка входа во все проекты портфеля.
 
-stage: Живая инфраструктура — 48 проверяемых профилей, ветка macos-air
+stage: Живая инфраструктура — 49 проверяемых профилей, ветка macos-air
 
 next: Восстановить и проаудировать hardcore FP, затем найти исходники svg-hero
 next_ref: README.md
@@ -19,4 +19,4 @@ tmuxinator:
   - tmux-configs
   - tmux-configs-workbench
 
-updated: 2026-09-05
+updated: 2026-09-12

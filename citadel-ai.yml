@@ -1,0 +1,55 @@
+name: citadel-ai
+root: <%= @settings["root"] || [@args[0]].compact.map { |a| File.expand_path(a) }.find { |p| File.directory?(p) } || File.expand_path("~/web_dev/repos/projects/ai/4-ai-meta-kit/CITADEL") %>
+
+startup_window: brief
+startup_pane: 0
+enable_pane_titles: true
+pane_title_position: top
+
+# CITADEL is the documentation/control repository for the meta-kernel loop.
+# Rooftop Cat Lab is its executable experiment and lives beside CITADEL.
+windows:
+  - brief:
+      layout: main-vertical
+      focused_pane: brief
+      panes:
+        - brief: bash -lc 'ref="$(sed -n "s/^next_ref:[[:space:]]*//p" .project-status.yml 2>/dev/null | head -n 1)"; [ -n "$ref" ] && [ -f "$ref" ] || ref=README.md; if command -v nvim >/dev/null 2>&1; then nvim "$ref"; else printf "%s\\n" "nvim is not installed ($ref)"; fi; exec "$SHELL"'
+        - status: >-
+            bash -lc 'sed -n "1,120p" .project-status.yml; printf "\\nLocks: docs/citadel/locks.md\\n"; exec "$SHELL"'
+        - git: bash -lc 'git status --short --branch; exec "$SHELL"'
+
+  - ai:
+      layout: tiled
+      focused_pane: codex
+      panes:
+        - codex: bash -lc '{ if command -v codex >/dev/null 2>&1; then codex resume --last || codex; else printf "%s\\n" "codex is not installed"; fi; }; exec "$SHELL"'
+        - claude: bash -lc '{ if command -v claude >/dev/null 2>&1; then claude --continue || claude; else printf "%s\\n" "claude is not installed"; fi; }; exec "$SHELL"'
+        - opencode: bash -lc '{ if command -v opencode >/dev/null 2>&1; then opencode --continue || opencode; else printf "%s\\n" "opencode is not installed"; fi; }; exec "$SHELL"'
+
+  - lab:
+      root: ../rooftop-cat-lab
+      layout: main-vertical
+      focused_pane: editor
+      panes:
+        - editor: bash -lc 'ref="$(sed -n "s/^next_ref:[[:space:]]*//p" .project-status.yml 2>/dev/null | head -n 1)"; [ -n "$ref" ] && [ -f "$ref" ] || ref=.; if command -v nvim >/dev/null 2>&1; then nvim "$ref"; else printf "%s\\n" "nvim is not installed ($ref)"; fi; exec "$SHELL"'
+        - dev: bash -lc 'pnpm dev; exec "$SHELL"'
+        - git: bash -lc 'git status --short --branch; exec "$SHELL"'
+
+  - playtest:
+      root: ../rooftop-cat-lab
+      layout: even-horizontal
+      focused_pane: guide
+      panes:
+        - guide: >-
+            bash -lc 'printf "%s\\n" "MK-000 A/B playtest" "Candidate A: http://127.0.0.1:3000/?candidate=A" "Candidate B: http://127.0.0.1:3000/?candidate=B" "Guide: docs/meta-kernel/MK-000/playtest-guide.md"; exec "$SHELL"'
+        - tests: bash -lc 'pnpm test; exec "$SHELL"'
+        - qa: bash -lc 'pnpm qa; exec "$SHELL"'
+
+  - check:
+      layout: even-horizontal
+      focused_pane: status
+      panes:
+        - status: >-
+            bash -lc 'printf "CITADEL\\n-------\\n"; git -C . status --short --branch; printf "\\nRooftop Cat Lab\\n----------------\\n"; git -C ../rooftop-cat-lab status --short --branch; exec "$SHELL"'
+        - docs: >-
+            bash -lc 'printf "%s\\n" "Canon: docs/citadel/locks.md" "Protocol: docs/citadel/protocol.md" "Roadmap: docs/citadel/roadmap.md"; exec "$SHELL"'
